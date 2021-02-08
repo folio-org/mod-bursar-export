@@ -1,5 +1,5 @@
 {
-  "id": "${artifactId}-${version}",
+  "id": "@artifactId@-@version@",
   "name": "Bursar Export Module",
   "provides": [
     {
@@ -8,9 +8,23 @@
       "handlers": [
         {
           "methods": ["GET"],
-          "pathPattern": "/bursars",
-          "permissionsRequired" : [ "bursars.collection.get" ],
-          "modulePermissions": [ "users.collection.get"]
+          "pathPattern": "/bursar-export/config",
+          "permissionsRequired" : [ "bursar.export.config.collection.get" ]
+        },
+        {
+          "methods": ["POST"],
+          "pathPattern": "/bursar-export/config",
+          "permissionsRequired" : [ "bursar.export.config.post" ]
+        },
+        {
+          "methods": ["PUT"],
+          "pathPattern": "/bursar-export/config/{configId}",
+          "permissionsRequired" : [ "bursar.export.config.put" ]
+        },
+        {
+          "methods": ["POST"],
+          "pathPattern": "/bursar-export",
+          "permissionsRequired" : [ "bursar.export.post" ]
         }
       ]
     },
@@ -31,9 +45,24 @@
   ],
   "permissionSets" : [
     {
-      "permissionName" : "bursar.export.collection.get",
-      "displayName" : "get user collection",
-      "description" : "Get a list of users"
+      "permissionName":"bursar.export.config.collection.get",
+      "displayName":"config single collection get",
+      "description":"Get a schedule config"
+    },
+    {
+      "permissionName":"bursar.export.config.post",
+      "displayName":"schedule config add",
+      "description":"Add a schedule config"
+    },
+    {
+      "permissionName":"bursar.export.config.put",
+      "displayName":"config object update",
+      "description":"Put a schedule config"
+    },
+    {
+      "permissionName":"bursar.export.post",
+      "displayName":"run scheduled job",
+      "description":"run scheduled job"
     }
   ],
   "requires": [
@@ -43,7 +72,7 @@
     },
     {
       "id": "feesfines",
-      "version": "15.10"
+      "version": "16.3"
     },
     {
       "id" : "users",
@@ -51,7 +80,7 @@
     }
   ],
   "launchDescriptor": {
-    "dockerImage": "${artifactId}:${version}",
+    "dockerImage": "@artifactId@:@version@",
     "dockerPull": false,
     "dockerArgs": {
       "HostConfig": {
