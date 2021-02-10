@@ -15,4 +15,4 @@ ARG RUN_ENV_FILE=run-env.sh
 COPY ${RUN_ENV_FILE} ${JAVA_APP_DIR}/
 
 # Expose this port locally in the container.
-EXPOSE 8081
+EXPOSE 8082
