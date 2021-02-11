@@ -2,13 +2,14 @@ package org.folio.bursar.export.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.folio.bursar.export.client.ConfigurationClient;
+import org.folio.bursar.export.domain.dto.BursarExportConfig;
+import org.folio.bursar.export.domain.dto.BursarExportConfigCollection;
 import org.folio.bursar.export.domain.dto.ConfigModel;
-import org.folio.bursar.export.domain.dto.ScheduleConfig;
-import org.folio.bursar.export.domain.dto.ScheduleConfigCollection;
 import org.folio.bursar.export.service.ConfigBursarExportService;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -25,19 +26,19 @@ public class ConfigBursarExportServiceImpl implements ConfigBursarExportService 
   private final ObjectMapper objectMapper;
 
   @Override
-  public void updateScheduleConfig(String configId, ScheduleConfig scheduleConfig) {
+  public void updateConfig(String configId, BursarExportConfig scheduleConfig) {
     ConfigModel config = createConfigModel(scheduleConfig);
     client.putConfiguration(config, configId);
   }
 
   @Override
-  public void postConfig(ScheduleConfig scheduleConfiguration) {
-    ConfigModel config = createConfigModel(scheduleConfiguration);
-    client.postConfiguration(config);
+  public ConfigModel postConfig(BursarExportConfig bursarExportConfig) {
+    ConfigModel config = createConfigModel(bursarExportConfig);
+    return client.postConfiguration(config);
   }
 
   @SneakyThrows
-  private ConfigModel createConfigModel(ScheduleConfig scheduleConfiguration) {
+  private ConfigModel createConfigModel(BursarExportConfig scheduleConfiguration) {
     var config = new ConfigModel();
     config.setModule(MODULE_NAME);
     config.setConfigName(CONFIG_NAME);
@@ -50,46 +51,53 @@ public class ConfigBursarExportServiceImpl implements ConfigBursarExportService 
 
   @SneakyThrows
   @Override
-  public ScheduleConfigCollection getScheduleConfig() {
+  public BursarExportConfigCollection getConfigCollection() {
+    return getConfig()
+      .map(this::createConfigCollection)
+      .orElse(emptyConfigCollection());
+  }
+
+  @Override
+  public Optional<BursarExportConfig> getConfig() {
     final String configuration =
         client.getConfiguration(String.format(CONFIG_QUERY, MODULE_NAME, CONFIG_NAME));
 
     final JSONObject jsonObject = new JSONObject(configuration);
     if (jsonObject.getInt("totalRecords") == 0) {
-      return emptyConfigCollection();
+      return Optional.empty();
     }
 
     try {
-      ScheduleConfig scheduleConfig = parseScheduleConfig(jsonObject);
-      return createConfigCollection(scheduleConfig);
+      var config = parseScheduleConfig(jsonObject);
+      return Optional.of(config);
     } catch (JsonProcessingException e) {
       log.error(
           "Can not parse configuration for module {} with config name {}",
           MODULE_NAME,
           CONFIG_NAME);
-      return emptyConfigCollection();
+      return Optional.empty();
     }
   }
 
-  private ScheduleConfig parseScheduleConfig(JSONObject jsonObject)
+  private BursarExportConfig parseScheduleConfig(JSONObject jsonObject)
       throws com.fasterxml.jackson.core.JsonProcessingException {
-    final JSONObject q = jsonObject.getJSONArray("configs").getJSONObject(0);
-    final ConfigModel configModel = objectMapper.readValue(q.toString(), ConfigModel.class);
+    final JSONObject configs = jsonObject.getJSONArray("configs").getJSONObject(0);
+    final ConfigModel configModel = objectMapper.readValue(configs.toString(), ConfigModel.class);
     final String value = configModel.getValue();
-    var scheduleConfig = objectMapper.readValue(value, ScheduleConfig.class);
-    scheduleConfig.setId(configModel.getId());
-    return scheduleConfig;
+    var config = objectMapper.readValue(value, BursarExportConfig.class);
+    config.setId(configModel.getId());
+    return config;
   }
 
-  private ScheduleConfigCollection createConfigCollection(ScheduleConfig scheduleConfig) {
-    var configCollection = new ScheduleConfigCollection();
+  private BursarExportConfigCollection createConfigCollection(BursarExportConfig scheduleConfig) {
+    var configCollection = new BursarExportConfigCollection();
     configCollection.addConfigsItem(scheduleConfig);
     configCollection.setTotalRecords(1);
     return configCollection;
   }
 
-  private ScheduleConfigCollection emptyConfigCollection() {
-    var configCollection = new ScheduleConfigCollection();
+  private BursarExportConfigCollection emptyConfigCollection() {
+    var configCollection = new BursarExportConfigCollection();
     configCollection.setTotalRecords(0);
     return configCollection;
   }

@@ -1,13 +1,17 @@
 package org.folio.bursar.export.service;
 
-import org.folio.bursar.export.domain.dto.ScheduleConfig;
-import org.folio.bursar.export.domain.dto.ScheduleConfigCollection;
+import java.util.Optional;
+import org.folio.bursar.export.domain.dto.BursarExportConfig;
+import org.folio.bursar.export.domain.dto.BursarExportConfigCollection;
+import org.folio.bursar.export.domain.dto.ConfigModel;
 
 public interface ConfigBursarExportService {
 
-  void updateScheduleConfig(String configId, ScheduleConfig scheduleConfig);
+  void updateConfig(String configId, BursarExportConfig config);
 
-  void postConfig(ScheduleConfig scheduleConfiguration);
+  ConfigModel postConfig(BursarExportConfig bursarExportConfig);
 
-  ScheduleConfigCollection getScheduleConfig();
+  BursarExportConfigCollection getConfigCollection();
+
+  Optional<BursarExportConfig> getConfig();
 }
