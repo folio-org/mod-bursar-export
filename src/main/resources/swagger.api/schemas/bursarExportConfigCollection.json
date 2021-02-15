@@ -8,7 +8,7 @@
       "id": "scheduleConfigurationList",
       "items": {
         "type": "object",
-        "$ref": "scheduleConfig.json"
+        "$ref": "bursarExportConfig.json"
       }
     },
     "totalRecords": {

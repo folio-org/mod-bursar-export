@@ -16,7 +16,7 @@ public interface ConfigurationClient {
   String getConfiguration(@RequestParam("query") String query);
 
   @PostMapping
-  void postConfiguration(@RequestBody ConfigModel config);
+  ConfigModel postConfiguration(@RequestBody ConfigModel config);
 
   @PutMapping(path = "/{entryId}")
   void putConfiguration(@RequestBody ConfigModel config, @PathVariable String entryId);

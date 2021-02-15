@@ -39,7 +39,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/scheduleConfigCollection"
+                $ref: "#/components/schemas/bursarExportConfigCollection"
         '500':
           description: Internal server error
           content:
@@ -78,7 +78,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/scheduleConfig"
+              $ref: "#/components/schemas/bursarExportConfig"
         required: true
   /bursar-export/config/{configId}:
     put:
@@ -117,7 +117,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/scheduleConfig"
+              $ref: "#/components/schemas/bursarExportConfig"
         required: true
     parameters:
       - name: configId
@@ -127,7 +127,11 @@ paths:
           type: string
 components:
   schemas:
-    scheduleConfig:
-      $ref: schemas/scheduleConfig.json
-    scheduleConfigCollection:
-      $ref: schemas/scheduleConfigurationCollection.json
+    bursarExportConfig:
+      $ref: schemas/bursarExportConfig.json
+    bursarExportConfigCollection:
+      $ref: schemas/bursarExportConfigCollection.json
+    userdataCollection:
+      $ref: schemas/user/userCollection.json
+    accountdataCollection:
+      $ref: schemas/feesfines/accountdataCollection.json
