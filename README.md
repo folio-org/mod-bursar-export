@@ -5,6 +5,10 @@ Copyright (C) 2021 The Open Library Foundation
 This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
+## DEPRECATED
+
+Some functionality is now handled by [mod-data-export-spring](https://github.com/folio-org/mod-data-export-spring).
+
 ## Introduction
 
 Module to provide feesfines export data by scheduling.
